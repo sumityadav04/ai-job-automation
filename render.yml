@@ -1,1 +1,21 @@
 
+services:
+  - name: ai-backend
+    type: web
+    runtime: node
+    rootDir: backend
+    buildCommand: "npm install"
+    startCommand: "node server.js"
+    envVars:
+      - key: MONGO_URL
+        sync: false
+
+  - name: ai-frontend
+    type: web
+    runtime: static
+    rootDir: frontend
+    buildCommand: "npm install && npm run build"
+    staticPublishPath: "build"
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://ai-backend.onrender.com

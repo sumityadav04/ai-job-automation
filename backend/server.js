@@ -1,36 +1,39 @@
+
+
 import express from "express";
 import cors from "cors";
-import mongoose from "mongoose";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGO_URL)
-  .then(() => console.log("MongoDB Connected"))
-  .catch(err => console.log("MongoDB Error:", err));
+// SIMPLE LOCAL JSON "DATABASE"
+let jobs = [
+  {
+    id: 1,
+    title: "Software Engineer",
+    company: "Google",
+    status: "Pending"
+  },
+  {
+    id: 2,
+    title: "Data Analyst",
+    company: "Microsoft",
+    status: "Pending"
+  }
+];
 
-// Job Schema
-const JobSchema = new mongoose.Schema({
-  title: String,
-  company: String,
-  url: String,
-  status: { type: String, default: "Pending" }
-});
-
-const Job = mongoose.model("Job", JobSchema);
-
-// Routes
-app.get("/job/list", async (req, res) => {
-  const jobs = await Job.find();
+// ROUTE: GET JOBS
+app.get("/job/list", (req, res) => {
   res.json(jobs);
 });
 
-app.post("/job/apply-all", async (req, res) => {
-  res.json({ message: "Auto apply functionality coming soon" });
+// ROUTE: APPLY ALL JOBS
+app.post("/job/apply-all", (req, res) => {
+  jobs = jobs.map(j => ({ ...j, status: "Applied" }));
+  res.json({ message: "Applied all jobs!", jobs });
 });
 
-// Start Server
-const PORT = process.env.PORT || 5000;
+// SERVER
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => console.log("Backend running on port", PORT));
